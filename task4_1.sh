@@ -38,8 +38,8 @@ echo "Uptime: `uptime -p | awk -F "up " '{print $2}'`" >> $file
 
 echo "Processes running: `ps | awk '/ps/ {print $1}'`" >> $file
 
-#echo "User logged in: `getent passwd | wc -l`" >> $file
-echo "User logged in: `cat /etc/passwd | wc -l`" >> $file
+#echo "User logged in: `cat /etc/passwd | wc -l`" >> $file
+echo "User logged in: `who | wc -l`" >> $file
 
 
 #Network:
