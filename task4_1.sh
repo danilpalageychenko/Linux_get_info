@@ -14,9 +14,27 @@ echo "RAM: `free -m | grep Mem | awk '{ print $2; }'`" >> $file
 #mapfile -t strings < <(echo "$LIST")
 #echo "Motherboard:`echo ${strings[0]} | cut -d : -f2` /`echo ${strings[1]} | cut -d : -f2` /`echo ${strings[2]} | cut -#d : -f2`"
 
-echo "Motherboard: `dmidecode -s baseboard-manufacturer` / `dmidecode -s baseboard-product-name` / `dmidecode -s baseboard-version`" >> $file
+#echo "Motherboard: `dmidecode -s baseboard-manufacturer` / `dmidecode -s baseboard-product-name` / `dmidecode -s baseboard-version`" >> $file
 
-echo "System Serial Number: `dmidecode -s system-serial-number`" >> $file
+
+
+manufacturer=`dmidecode -s baseboard-manufacturer`
+manufacturer="`echo $manufacturer | sed 's/^0\?$/Unknown/'`"
+
+productName=`dmidecode -s baseboard-product-name`
+productName="`echo $productName | sed 's/^0\?$/Unknown/'`"
+
+if [ "$manufacturer" = "Unknown" ] && [ $productName != "Unknown" ]; then
+echo "Motherboard: $productName" >> $file
+elif [ "$manufacturer" = "Unknown" ] && [ $productName = "Unknown" ]; then
+echo "Motherboard: Unknown" >> $file
+else
+echo "Motherboard: $manufacturer $productName" >> $file
+fi
+
+
+serialNumber=`dmidecode -s system-serial-number | sed 's/^0\?$/Unknown/'`
+echo "System Serial Number: $serialNumber" >> $file
 
 
 #Systeam:
@@ -30,7 +48,7 @@ echo "OS Distribution:" $os >> $file
 
 echo "Kernel version: `uname -r`" >> $file
 
-echo "Installation date: `uname -a | cut -d "(" -f2 | cut -d ")" -f1`" >> $file
+echo "Installation date: `ls -ctl --time-style=long-iso / | tail -n 1 | awk '{ print $6 }'`" >> $file
 
 echo "Hostname: `hostname`" >> $file
 
