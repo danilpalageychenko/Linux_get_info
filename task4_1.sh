@@ -66,9 +66,11 @@ echo "--- Network ---" >> $file
 i=1;
 for var in $(ip add show | awk '/^[0-9]: /{print $2}' | awk -F ":" '{print $1}')
 do
-if ip add show label $var | grep -q "inet"
+if ip add show $var | grep -q "inet"
 then
-echo "<Iface #$i $var>: `ip add show label $var | grep "inet" | awk '{print $2}' | head -1`" >> $file 
+interface=`ip add show $var | grep "inet " | awk '{print $2}'`
+interface=`echo $interface | sed 's/\s/, /g'`
+echo "<Iface #$i $var>: $interface" >> $file 
 else
 echo "<Iface #$i $var>: -" >> $file
 fi
